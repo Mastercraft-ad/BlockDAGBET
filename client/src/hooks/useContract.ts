@@ -56,24 +56,125 @@ export function useContract() {
   }, [toast]);
 
   const createMarket = useCallback(async (question: string, deadline: number, value: string) => {
-    const contract = await Web3Utils.getContract();
-    return executeTransaction(
-      () => contract.createMarket(question, deadline, { 
-        value: Web3Utils.parseEthAmount(value) 
-      }),
-      'Market created successfully!'
-    );
-  }, [executeTransaction]);
+    try {
+      const contract = await Web3Utils.getContract();
+      return executeTransaction(
+        () => contract.createMarket(question, deadline, { 
+          value: Web3Utils.parseEthAmount(value) 
+        }),
+        'Market created successfully!'
+      );
+    } catch (contractError: any) {
+      // Fallback to localStorage when contract isn't available
+      console.warn('Smart contract not available, saving market to localStorage:', contractError.message);
+      
+      try {
+        setTxState({ loading: true, hash: null, error: null });
+        
+        // Simulate market creation in localStorage
+        const existingMarkets = localStorage.getItem('prediction_markets');
+        const markets = existingMarkets ? JSON.parse(existingMarkets) : [];
+        
+        const newMarket = {
+          id: (markets.length + 1).toString(),
+          question,
+          deadline,
+          creator: 'demo-user',
+          isResolved: false,
+          outcome: false,
+          totalYesBets: '0',
+          totalNoBets: '0', 
+          yesPool: value,
+          noPool: value,
+          createdAt: Math.floor(Date.now() / 1000),
+          resolvedAt: undefined,
+        };
+        
+        markets.push(newMarket);
+        localStorage.setItem('prediction_markets', JSON.stringify(markets));
+        
+        // Simulate transaction success
+        setTimeout(() => {
+          setTxState({ loading: false, hash: 'demo-tx-hash', error: null });
+          toast({
+            title: 'Market Created (Demo)',
+            description: 'Market saved locally for demonstration',
+          });
+        }, 1000);
+        
+        return { hash: 'demo-tx-hash' };
+      } catch (storageError: any) {
+        setTxState({ loading: false, hash: null, error: storageError.message });
+        toast({
+          title: 'Creation Failed',
+          description: storageError.message,
+          variant: 'destructive',
+        });
+        throw storageError;
+      }
+    }
+  }, [executeTransaction, toast]);
 
   const placeBet = useCallback(async (marketId: string, choice: boolean, amount: string) => {
-    const contract = await Web3Utils.getContract();
-    return executeTransaction(
-      () => contract.placeBet(marketId, choice, { 
-        value: Web3Utils.parseEthAmount(amount) 
-      }),
-      `Bet placed successfully! You bet ${choice ? 'YES' : 'NO'}`
-    );
-  }, [executeTransaction]);
+    try {
+      const contract = await Web3Utils.getContract();
+      return executeTransaction(
+        () => contract.placeBet(marketId, choice, { 
+          value: Web3Utils.parseEthAmount(amount) 
+        }),
+        `Bet placed successfully! You bet ${choice ? 'YES' : 'NO'}`
+      );
+    } catch (contractError: any) {
+      // Fallback to localStorage when contract isn't available
+      console.warn('Smart contract not available, updating market in localStorage:', contractError.message);
+      
+      try {
+        setTxState({ loading: true, hash: null, error: null });
+        
+        // Update market in localStorage
+        const existingMarkets = localStorage.getItem('prediction_markets');
+        const markets = existingMarkets ? JSON.parse(existingMarkets) : [];
+        
+        const marketIndex = markets.findIndex((m: any) => m.id === marketId);
+        if (marketIndex === -1) {
+          throw new Error('Market not found');
+        }
+        
+        const market = markets[marketIndex];
+        const betAmount = parseFloat(amount);
+        
+        if (choice) {
+          market.totalYesBets = (parseFloat(market.totalYesBets) + betAmount).toString();
+          market.yesPool = (parseFloat(market.yesPool) + betAmount).toString();
+        } else {
+          market.totalNoBets = (parseFloat(market.totalNoBets) + betAmount).toString();
+          market.noPool = (parseFloat(market.noPool) + betAmount).toString();
+        }
+        
+        markets[marketIndex] = market;
+        localStorage.setItem('prediction_markets', JSON.stringify(markets));
+        
+        // Simulate transaction success
+        setTimeout(() => {
+          setTxState({ loading: false, hash: 'demo-bet-hash', error: null });
+          toast({
+            title: 'Bet Placed (Demo)',
+            description: `You bet ${choice ? 'YES' : 'NO'} with ${amount} ETH`,
+          });
+        }, 1000);
+        
+        return { hash: 'demo-bet-hash' };
+      } catch (storageError: any) {
+        setTxState({ loading: false, hash: null, error: storageError.message });
+        toast({
+          title: 'Bet Failed',
+          description: storageError.message,
+          variant: 'destructive',
+        });
+        throw storageError;
+      }
+    }
+  }, [executeTransaction, toast]);
 
   const resolveMarket = useCallback(async (marketId: string, outcome: boolean) => {
     const contract = await Web3Utils.getContract();
