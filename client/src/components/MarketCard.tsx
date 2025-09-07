@@ -70,36 +70,43 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
 
   return (
     <Card className="glass-card border-border hover:bg-opacity-10 transition-all">
-      <CardContent className="p-6">
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+      <CardContent className="p-4 sm:p-6">
+        <div className="flex flex-col space-y-4">
           <div className="flex-1">
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h4 className="text-lg font-semibold text-foreground mb-2" data-testid={`text-market-question-${market.id}`}>
+            <div className="flex items-start justify-between mb-3 sm:mb-4">
+              <div className="flex-1 pr-2">
+                <h4 className="text-base sm:text-lg font-semibold text-foreground mb-2" data-testid={`text-market-question-${market.id}`}>
                   {market.question}
                 </h4>
-                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 text-xs sm:text-sm text-muted-foreground">
                   <span className="flex items-center">
-                    <Clock className="w-4 h-4 mr-1" />
+                    <Clock className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                     {isExpired ? 'Expired' : `Ends ${timeRemaining}`}
                   </span>
                   <span className="flex items-center">
-                    <TrendingUp className="w-4 h-4 mr-1" />
+                    <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
                     Volume: {formatCurrency(totalVolume.toString())} ETH
                   </span>
-                  {getStatusBadge()}
+                  <div className="sm:hidden">
+                    {getStatusBadge()}
+                  </div>
                 </div>
               </div>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                <Heart className="w-5 h-5" />
-              </Button>
+              <div className="flex items-center space-x-2">
+                <div className="hidden sm:block">
+                  {getStatusBadge()}
+                </div>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground p-1">
+                  <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
+                </Button>
+              </div>
             </div>
 
             {/* Market Progress Bar */}
             <div className="mb-4">
-              <div className="flex justify-between text-sm mb-2">
-                <span className="text-emerald-400">YES {yesPercentage}%</span>
-                <span className="text-red-400">NO {noPercentage}%</span>
+              <div className="flex justify-between text-xs sm:text-sm mb-2">
+                <span className="text-emerald-400 font-medium">YES {yesPercentage}%</span>
+                <span className="text-red-400 font-medium">NO {noPercentage}%</span>
               </div>
               <div className="h-2 bg-secondary rounded-full overflow-hidden">
                 <div 
@@ -117,9 +124,9 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
 
           {/* Betting Interface */}
           {isActive && (
-            <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-0 lg:space-y-3 xl:space-y-0 xl:space-x-4 lg:w-80">
-              <div className="flex-1">
-                <div className="flex items-center space-x-2 mb-2">
+            <div className="border-t border-border pt-4">
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2">
                   <Input
                     type="number"
                     step="0.01"
@@ -142,29 +149,32 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                     MAX
                   </Button>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:gap-3">
                   <Button
                     onClick={() => handleBet(true)}
                     disabled={!wallet.isConnected || txState.loading || parseFloat(betAmount) < 0.01}
-                    className="bet-button-yes px-4 py-3 rounded-lg text-white font-semibold text-sm"
+                    className="bet-button-yes px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-white font-semibold text-xs sm:text-sm"
                     data-testid={`button-bet-yes-${market.id}`}
                   >
-                    YES ✅ @{yesOdds.toFixed(2)}
+                    <span className="hidden sm:inline">YES ✅ @{yesOdds.toFixed(2)}</span>
+                    <span className="sm:hidden">YES ✅</span>
                   </Button>
                   <Button
                     onClick={() => handleBet(false)}
                     disabled={!wallet.isConnected || txState.loading || parseFloat(betAmount) < 0.01}
-                    className="bet-button-no px-4 py-3 rounded-lg text-white font-semibold text-sm"
+                    className="bet-button-no px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-white font-semibold text-xs sm:text-sm"
                     data-testid={`button-bet-no-${market.id}`}
                   >
-                    NO ❌ @{noOdds.toFixed(2)}
+                    <span className="hidden sm:inline">NO ❌ @{noOdds.toFixed(2)}</span>
+                    <span className="sm:hidden">NO ❌</span>
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-2 text-center">
-                  Potential return: <span className="text-foreground font-medium">
+                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                  <span>Potential return:</span>
+                  <span className="text-foreground font-medium">
                     {formatCurrency(potentialReturn.toString())} ETH
                   </span>
-                </p>
+                </div>
               </div>
             </div>
           )}

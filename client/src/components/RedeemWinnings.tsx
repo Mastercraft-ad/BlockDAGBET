@@ -116,34 +116,34 @@ export function RedeemWinnings() {
 
   return (
     <Card className="glass-card border-border">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold flex items-center">
-          <DollarSign className="w-6 h-6 mr-3 text-emerald-400" />
+      <CardHeader className="pb-4 sm:pb-6">
+        <CardTitle className="text-lg sm:text-2xl font-bold flex items-center">
+          <DollarSign className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-emerald-400" />
           Claim Winnings
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Summary Card */}
-        <div className="stats-card rounded-xl p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="stats-card rounded-xl p-4 sm:p-6">
+          <div className="grid grid-cols-3 gap-3 sm:gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-emerald-400 mb-1" data-testid="text-total-claimable">
+              <div className="text-lg sm:text-2xl font-bold text-emerald-400 mb-1" data-testid="text-total-claimable">
                 {formatCurrency(totalClaimable.toString())} ETH
               </div>
-              <div className="text-muted-foreground text-sm">Total Claimable</div>
+              <div className="text-muted-foreground text-xs sm:text-sm">Total Claimable</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-amber-400 mb-1" data-testid="text-markets-won">
+              <div className="text-lg sm:text-2xl font-bold text-amber-400 mb-1" data-testid="text-markets-won">
                 {claimableWinnings.length}
               </div>
-              <div className="text-muted-foreground text-sm">Markets Won</div>
+              <div className="text-muted-foreground text-xs sm:text-sm">Markets Won</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-primary mb-1">
+              <div className="text-lg sm:text-2xl font-bold text-primary mb-1">
                 {totalClaimable > 0 ? '+' : ''}
                 {totalClaimable > 0 ? Math.round(((totalClaimable - claimableWinnings.reduce((sum, w) => sum + parseFloat(w.betAmount), 0)) / claimableWinnings.reduce((sum, w) => sum + parseFloat(w.betAmount), 0)) * 100) : 0}%
               </div>
-              <div className="text-muted-foreground text-sm">Total Return</div>
+              <div className="text-muted-foreground text-xs sm:text-sm">Total Return</div>
             </div>
           </div>
         </div>

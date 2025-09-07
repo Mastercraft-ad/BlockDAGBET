@@ -74,9 +74,48 @@ export function MarketList() {
 
   return (
     <section id="markets" className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold">Markets</h3>
-        <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
+        <h3 className="text-xl sm:text-2xl font-bold">Markets</h3>
+        
+        {/* Mobile Layout */}
+        <div className="flex flex-col sm:hidden space-y-3">
+          <div className="flex items-center justify-between space-x-3">
+            <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
+              <SelectTrigger className="flex-1 bg-input border-border text-sm" data-testid="select-market-filter">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="glass-card border-border">
+                <SelectItem value="all">All Markets</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="resolved">Resolved</SelectItem>
+                <SelectItem value="expired">Expired</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={sortBy} onValueChange={(value: SortType) => setSortBy(value)}>
+              <SelectTrigger className="flex-1 bg-input border-border text-sm" data-testid="select-market-sort">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="glass-card border-border">
+                <SelectItem value="volume">Volume</SelectItem>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="ending-soon">Ending Soon</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refreshMarkets}
+            className="border-border w-full"
+            data-testid="button-refresh-markets"
+          >
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Refresh Markets
+          </Button>
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden sm:flex items-center space-x-4">
           <Button
             variant="outline"
             size="sm"
@@ -130,7 +169,7 @@ export function MarketList() {
           </p>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {filteredMarkets.map((market) => (
             <MarketCard
               key={market.id}

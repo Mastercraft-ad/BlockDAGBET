@@ -33,13 +33,13 @@ export function ResolveMarket() {
 
   return (
     <Card className="glass-card border-border">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-bold flex items-center">
-            <CheckCircle className="w-6 h-6 mr-3 text-amber-400" />
+      <CardHeader className="pb-4 sm:pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
+          <CardTitle className="text-lg sm:text-2xl font-bold flex items-center">
+            <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-amber-400" />
             Market Resolution
           </CardTitle>
-          <Badge variant="secondary" className="px-3 py-1 bg-amber-500/20 text-amber-400">
+          <Badge variant="secondary" className="px-2 sm:px-3 py-1 bg-amber-500/20 text-amber-400 w-fit text-xs sm:text-sm">
             Oracle Only
           </Badge>
         </div>
@@ -89,17 +89,17 @@ export function ResolveMarket() {
                   </Badge>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <Button
                     onClick={() => handleResolve(market.id, true)}
                     disabled={!wallet.isConnected || (isLoading && resolvingMarketId === market.id)}
-                    className="bet-button-yes px-6 py-3 rounded-lg text-white font-semibold"
+                    className="bet-button-yes px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-white font-semibold text-sm sm:text-base"
                     data-testid={`button-resolve-yes-${market.id}`}
                   >
                     {isLoading && resolvingMarketId === market.id ? (
                       <div className="flex items-center space-x-2">
-                        <div className="loading-spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                        <span>Resolving...</span>
+                        <div className="loading-spinner w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full" />
+                        <span className="text-xs sm:text-sm">Resolving...</span>
                       </div>
                     ) : (
                       'Resolve as YES ✅'
@@ -108,13 +108,13 @@ export function ResolveMarket() {
                   <Button
                     onClick={() => handleResolve(market.id, false)}
                     disabled={!wallet.isConnected || (isLoading && resolvingMarketId === market.id)}
-                    className="bet-button-no px-6 py-3 rounded-lg text-white font-semibold"
+                    className="bet-button-no px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-white font-semibold text-sm sm:text-base"
                     data-testid={`button-resolve-no-${market.id}`}
                   >
                     {isLoading && resolvingMarketId === market.id ? (
                       <div className="flex items-center space-x-2">
-                        <div className="loading-spinner w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                        <span>Resolving...</span>
+                        <div className="loading-spinner w-3 h-3 sm:w-4 sm:h-4 border-2 border-white border-t-transparent rounded-full" />
+                        <span className="text-xs sm:text-sm">Resolving...</span>
                       </div>
                     ) : (
                       'Resolve as NO ❌'

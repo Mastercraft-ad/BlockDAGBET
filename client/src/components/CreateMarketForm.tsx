@@ -105,14 +105,14 @@ export function CreateMarketForm({ onMarketCreated }: { onMarketCreated?: () => 
 
   return (
     <Card className="glass-card border-border">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold flex items-center">
-          <Plus className="w-6 h-6 mr-3 text-primary" />
+      <CardHeader className="pb-4 sm:pb-6">
+        <CardTitle className="text-lg sm:text-2xl font-bold flex items-center">
+          <Plus className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-primary" />
           Create New Market
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <CardContent className="px-4 sm:px-6">
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
           <div>
             <Label htmlFor="question" className="block text-sm font-medium text-foreground mb-2">
               Market Question
@@ -121,7 +121,7 @@ export function CreateMarketForm({ onMarketCreated }: { onMarketCreated?: () => 
               id="question"
               value={formData.question}
               onChange={(e) => handleInputChange('question', e.target.value)}
-              className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+              className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
               rows={3}
               placeholder="Will Bitcoin reach $100,000 by the end of 2024?"
               disabled={txState.loading}
@@ -132,7 +132,7 @@ export function CreateMarketForm({ onMarketCreated }: { onMarketCreated?: () => 
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             <div>
               <Label htmlFor="deadline" className="block text-sm font-medium text-foreground mb-2">
                 Resolution Deadline
@@ -143,7 +143,7 @@ export function CreateMarketForm({ onMarketCreated }: { onMarketCreated?: () => 
                 value={formData.deadline}
                 onChange={(e) => handleInputChange('deadline', e.target.value)}
                 min={minDateTime}
-                className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
                 disabled={txState.loading}
                 data-testid="input-market-deadline"
               />
@@ -159,7 +159,7 @@ export function CreateMarketForm({ onMarketCreated }: { onMarketCreated?: () => 
                 min="0.01"
                 value={formData.initialLiquidity}
                 onChange={(e) => handleInputChange('initialLiquidity', e.target.value)}
-                className="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-2 sm:py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-sm"
                 placeholder="1.0"
                 disabled={txState.loading}
                 data-testid="input-initial-liquidity"
@@ -167,9 +167,9 @@ export function CreateMarketForm({ onMarketCreated }: { onMarketCreated?: () => 
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
-            <AlertTriangle className="w-5 h-5 text-amber-400" />
-            <p className="text-sm text-amber-400">
+          <div className="flex items-start space-x-2 sm:space-x-3 p-3 sm:p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+            <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 flex-shrink-0 mt-0.5" />
+            <p className="text-xs sm:text-sm text-amber-400">
               Market creation requires 0.1 ETH fee + gas costs + initial liquidity
             </p>
           </div>
@@ -177,13 +177,13 @@ export function CreateMarketForm({ onMarketCreated }: { onMarketCreated?: () => 
           <Button
             type="submit"
             disabled={!wallet.isConnected || txState.loading}
-            className="wallet-button w-full py-4 rounded-lg text-primary-foreground font-semibold text-lg"
+            className="wallet-button w-full py-3 sm:py-4 rounded-lg text-primary-foreground font-semibold text-base sm:text-lg"
             data-testid="button-create-market"
           >
             {txState.loading ? (
               <div className="flex items-center space-x-2">
-                <div className="loading-spinner w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full" />
-                <span>Creating Market...</span>
+                <div className="loading-spinner w-4 h-4 sm:w-5 sm:h-5 border-2 border-primary-foreground border-t-transparent rounded-full" />
+                <span className="text-sm sm:text-base">Creating Market...</span>
               </div>
             ) : (
               'Create Market'
