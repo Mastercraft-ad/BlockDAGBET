@@ -56,7 +56,7 @@ export function WalletConnection() {
         <div className="p-3 border-b border-border">
           <div className="text-sm text-muted-foreground">Balance</div>
           <div className="text-lg font-semibold" data-testid="text-wallet-balance">
-            {parseFloat(wallet.balance).toFixed(4)} ETH
+            {parseFloat(wallet.balance).toFixed(4)} BDAG
           </div>
         </div>
         {wallet.chainId && !Web3Utils.isChainSupported(wallet.chainId) && (

@@ -126,6 +126,7 @@ export function MarketList() {
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
           </Button>
+          
           <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
             <SelectTrigger className="w-40 bg-input border-border" data-testid="select-market-filter">
               <SelectValue />

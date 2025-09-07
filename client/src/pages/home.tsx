@@ -24,10 +24,10 @@ export default function Home() {
             <div className="flex items-center space-x-2 sm:space-x-4">
               <div className="flex items-center space-x-2">
                 <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <span className="text-primary-foreground font-bold text-base sm:text-lg">P</span>
+                  <span className="text-primary-foreground font-bold text-base sm:text-lg">DB</span>
                 </div>
                 <h1 className="text-sm sm:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                  <span className="hidden sm:inline">DecentralizedPredictions</span>
+                  <span className="hidden sm:inline">DAGBET</span>
                   <span className="sm:hidden">PredictMarket</span>
                 </h1>
               </div>
@@ -40,7 +40,6 @@ export default function Home() {
             <nav className="hidden lg:flex items-center space-x-6">
               <a href="#markets" className="text-foreground hover:text-primary transition-colors">Markets</a>
               <a href="#create" className="text-foreground hover:text-primary transition-colors">Create</a>
-              <a href="#analytics" className="text-foreground hover:text-primary transition-colors">Analytics</a>
             </nav>
 
             <WalletConnection />
@@ -63,7 +62,7 @@ export default function Home() {
           <div className="grid grid-cols-3 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
             <div className="glass-card rounded-lg sm:rounded-xl p-3 sm:p-4 lg:p-6 text-center">
               <div className="text-lg sm:text-2xl lg:text-3xl font-bold text-primary mb-1 sm:mb-2" data-testid="stats-total-volume">
-                {formatCurrency(totalVolume.toString())} ETH
+                {formatCurrency(totalVolume.toString())} BDAG
               </div>
               <div className="text-xs sm:text-sm text-muted-foreground">Total Volume</div>
             </div>
@@ -102,12 +101,12 @@ export default function Home() {
         <div className="container mx-auto px-4 py-6 sm:py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0">
             <div className="flex items-center space-x-3 sm:space-x-4">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-base sm:text-lg">P</span>
+              <div className="w-7 h-7 sm:w-20 sm:h-8 rounded-lg bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-bold text-base sm:text-lg">DAGBET</span>
               </div>
               <span className="text-foreground font-semibold text-sm sm:text-base">
-                <span className="hidden sm:inline">DecentralizedPredictions</span>
-                <span className="sm:hidden">PredictMarket</span>
+                <span className="hidden sm:inline">Decentralized Predictions</span>
+                <span className="sm:hidden">DAGBETMarket</span>
               </span>
             </div>
             <div className="flex items-center space-x-4 sm:space-x-6 text-xs sm:text-sm text-muted-foreground">
@@ -118,7 +117,7 @@ export default function Home() {
             </div>
           </div>
           <div className="border-t border-border mt-4 sm:mt-6 pt-4 sm:pt-6 text-center text-xs sm:text-sm text-muted-foreground">
-            <p>© 2024 DecentralizedPredictions. Built on Ethereum. Powered by Web3.</p>
+            <p>© 2025 DAGEBET Predictions. Developed by EagleDevs.</p>
           </div>
         </div>
       </footer>

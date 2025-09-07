@@ -85,7 +85,7 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                   </span>
                   <span className="flex items-center">
                     <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4 mr-1" />
-                    Volume: {formatCurrency(totalVolume.toString())} ETH
+                    Volume: {formatCurrency(totalVolume.toString())} BDAG
                   </span>
                   <div className="sm:hidden">
                     {getStatusBadge()}
@@ -116,8 +116,8 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                 />
               </div>
               <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                <span>YES: {formatCurrency(market.yesPool)} ETH</span>
-                <span>NO: {formatCurrency(market.noPool)} ETH</span>
+                <span>YES: {formatCurrency(market.yesPool)} BDAG</span>
+                <span>NO: {formatCurrency(market.noPool)} BDAG</span>
               </div>
             </div>
           </div>
@@ -134,7 +134,7 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                     value={betAmount}
                     onChange={(e) => setBetAmount(e.target.value)}
                     className="flex-1 px-3 py-2 bg-input border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-                    placeholder="0.1 ETH"
+                    placeholder="0.1 BDAG"
                     disabled={txState.loading}
                     data-testid={`input-bet-amount-${market.id}`}
                   />
@@ -172,7 +172,7 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                 <div className="flex justify-between items-center text-xs text-muted-foreground">
                   <span>Potential return:</span>
                   <span className="text-foreground font-medium">
-                    {formatCurrency(potentialReturn.toString())} ETH
+                    {formatCurrency(potentialReturn.toString())} BDAG
                   </span>
                 </div>
               </div>

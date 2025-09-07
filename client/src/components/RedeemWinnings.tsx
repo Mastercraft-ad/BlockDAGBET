@@ -128,7 +128,7 @@ export function RedeemWinnings() {
           <div className="grid grid-cols-3 gap-3 sm:gap-6">
             <div className="text-center">
               <div className="text-lg sm:text-2xl font-bold text-emerald-400 mb-1" data-testid="text-total-claimable">
-                {formatCurrency(totalClaimable.toString())} ETH
+                {formatCurrency(totalClaimable.toString())} BDAG
               </div>
               <div className="text-muted-foreground text-xs sm:text-sm">Total Claimable</div>
             </div>

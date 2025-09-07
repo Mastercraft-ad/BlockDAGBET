@@ -32,9 +32,9 @@ export function useContract() {
       });
 
       const receipt = await tx.wait();
-      
+
       setTxState({ loading: false, hash: receipt.hash, error: null });
-      
+
       toast({
         title: 'Success',
         description: successMessage,
@@ -44,13 +44,13 @@ export function useContract() {
     } catch (error: any) {
       const errorMessage = error.reason || error.message || 'Transaction failed';
       setTxState({ loading: false, hash: null, error: errorMessage });
-      
+
       toast({
         title: 'Transaction Failed',
         description: errorMessage,
         variant: 'destructive',
       });
-      
+
       throw error;
     }
   }, [toast]);
@@ -65,16 +65,14 @@ export function useContract() {
         'Market created successfully!'
       );
     } catch (contractError: any) {
-      // Fallback to localStorage when contract isn't available
       console.warn('Smart contract not available, saving market to localStorage:', contractError.message);
-      
+
       try {
         setTxState({ loading: true, hash: null, error: null });
-        
-        // Simulate market creation in localStorage
+
         const existingMarkets = localStorage.getItem('prediction_markets');
         const markets = existingMarkets ? JSON.parse(existingMarkets) : [];
-        
+
         const newMarket = {
           id: (markets.length + 1).toString(),
           question,
@@ -84,16 +82,15 @@ export function useContract() {
           outcome: false,
           totalYesBets: '0',
           totalNoBets: '0', 
-          yesPool: value,
-          noPool: value,
+          yesPool: '0',
+          noPool: '0',
           createdAt: Math.floor(Date.now() / 1000),
           resolvedAt: undefined,
         };
-        
+
         markets.push(newMarket);
         localStorage.setItem('prediction_markets', JSON.stringify(markets));
-        
-        // Simulate transaction success
+
         setTimeout(() => {
           setTxState({ loading: false, hash: 'demo-tx-hash', error: null });
           toast({
@@ -101,7 +98,7 @@ export function useContract() {
             description: 'Market saved locally for demonstration',
           });
         }, 1000);
-        
+
         return { hash: 'demo-tx-hash' };
       } catch (storageError: any) {
         setTxState({ loading: false, hash: null, error: storageError.message });
@@ -125,24 +122,20 @@ export function useContract() {
         `Bet placed successfully! You bet ${choice ? 'YES' : 'NO'}`
       );
     } catch (contractError: any) {
-      // Fallback to localStorage when contract isn't available
       console.warn('Smart contract not available, updating market in localStorage:', contractError.message);
-      
+
       try {
         setTxState({ loading: true, hash: null, error: null });
-        
-        // Update market in localStorage
+
         const existingMarkets = localStorage.getItem('prediction_markets');
         const markets = existingMarkets ? JSON.parse(existingMarkets) : [];
-        
+
         const marketIndex = markets.findIndex((m: any) => m.id === marketId);
-        if (marketIndex === -1) {
-          throw new Error('Market not found');
-        }
-        
+        if (marketIndex === -1) throw new Error('Market not found');
+
         const market = markets[marketIndex];
         const betAmount = parseFloat(amount);
-        
+
         if (choice) {
           market.totalYesBets = (parseFloat(market.totalYesBets) + betAmount).toString();
           market.yesPool = (parseFloat(market.yesPool) + betAmount).toString();
@@ -150,11 +143,10 @@ export function useContract() {
           market.totalNoBets = (parseFloat(market.totalNoBets) + betAmount).toString();
           market.noPool = (parseFloat(market.noPool) + betAmount).toString();
         }
-        
+
         markets[marketIndex] = market;
         localStorage.setItem('prediction_markets', JSON.stringify(markets));
-        
-        // Simulate transaction success
+
         setTimeout(() => {
           setTxState({ loading: false, hash: 'demo-bet-hash', error: null });
           toast({
@@ -162,7 +154,7 @@ export function useContract() {
             description: `You bet ${choice ? 'YES' : 'NO'} with ${amount} ETH`,
           });
         }, 1000);
-        
+
         return { hash: 'demo-bet-hash' };
       } catch (storageError: any) {
         setTxState({ loading: false, hash: null, error: storageError.message });
@@ -196,19 +188,20 @@ export function useContract() {
     try {
       const contract = await Web3Utils.getContract();
       const market = await contract.getMarket(marketId);
+
       return {
         id: marketId,
-        question: market.question,
-        deadline: Number(market.deadline),
-        creator: market.creator,
-        isResolved: market.isResolved,
-        outcome: market.outcome,
-        totalYesBets: Web3Utils.formatEthAmount(market.totalYesBets),
-        totalNoBets: Web3Utils.formatEthAmount(market.totalNoBets),
-        yesPool: Web3Utils.formatEthAmount(market.yesPool),
-        noPool: Web3Utils.formatEthAmount(market.noPool),
-        createdAt: Number(market.createdAt),
-        resolvedAt: market.resolvedAt ? Number(market.resolvedAt) : undefined,
+        question: market.question ?? market[0],
+        deadline: Number(market.deadline ?? market[1]),
+        creator: market.creator ?? market[2],
+        isResolved: market.isResolved ?? market[3],
+        outcome: market.outcome ?? market[4],
+        totalYesBets: Web3Utils.formatEthAmount(market.totalYesBets ?? market[5]),
+        totalNoBets: Web3Utils.formatEthAmount(market.totalNoBets ?? market[6]),
+        yesPool: Web3Utils.formatEthAmount(market.yesPool ?? market[7]),
+        noPool: Web3Utils.formatEthAmount(market.noPool ?? market[8]),
+        createdAt: Number(market.createdAt ?? market[9]),
+        resolvedAt: market.resolvedAt ? Number(market.resolvedAt ?? market[10]) : undefined,
       };
     } catch (error: any) {
       toast({
@@ -216,7 +209,7 @@ export function useContract() {
         description: error.message,
         variant: 'destructive',
       });
-      throw error;
+      return null;
     }
   }, [toast]);
 
@@ -236,8 +229,8 @@ export function useContract() {
       const contract = await Web3Utils.getContract();
       const bets = await contract.getUserBets(userAddress, marketId);
       return {
-        yesBets: Web3Utils.formatEthAmount(bets.yesBets),
-        noBets: Web3Utils.formatEthAmount(bets.noBets),
+        yesBets: Web3Utils.formatEthAmount(bets.yesBets ?? bets[0]),
+        noBets: Web3Utils.formatEthAmount(bets.noBets ?? bets[1]),
       };
     } catch (error: any) {
       console.error('Failed to get user bets:', error);
