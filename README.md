@@ -12,7 +12,12 @@ DAGBet – Hackathon Meme Prediction Market
 
 
 ## 📑 Table of Contents  
-- [Overview](#overview)  
+- [Overview](#overview)
+- [User Preferences](#user-preferences)
+- [System Architecture](#System-Architecture)
+- [Backend Architecture](#Backend-Architecture)
+- [Smart Contract Integration](#Smart-Contract-Integration)
+- [Blockchain Infrastructure](#Blockchain-Infrastructure)
 - [Problem Statement](#problem-statement)  
 - [Our Solution](#our-solution)  
 - [How It Works](#how-it-works)  
@@ -26,11 +31,46 @@ DAGBet – Hackathon Meme Prediction Market
 
 ## Overview  
 
+This is a decentralized prediction market application built with React, Express.js, and Web3 technology. The application allows users to create prediction markets, place bets on outcomes, and claim winnings in a blockchain-based environment. The system operates as a full-stack web application with smart contract integration for handling market creation, betting mechanics, and outcome resolution.
+
 Example Meme Markets:  
 - 🏆 *“Will our team place top 3?”*  
 - 🕒 *“Will the hackathon finish on time?”*  
 
 By putting predictions **on-chain**, DAGBet keeps **judges, participants, and the audience engaged** in real time.  
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+## System Architecture
+
+### Frontend Architecture
+The client is built using React with TypeScript and follows a modern component-based architecture:
+- *UI Framework*: React 18 with TypeScript, using Vite as the build tool
+- *Styling*: Tailwind CSS with shadcn/ui component library for consistent design
+- *State Management*: TanStack Query (React Query) for server state management and caching
+- *Routing*: Wouter for lightweight client-side routing
+- *Web3 Integration*: Ethers.js for blockchain interactions and wallet connectivity
+
+## Backend Architecture  
+The server implements a RESTful API using Express.js:
+- *Runtime*: Node.js with TypeScript and ESM modules
+- *API Framework*: Express.js with middleware for logging and error handling
+- *Storage Interface*: Abstracted storage layer with both in-memory and database implementations
+- *Development*: Hot reload support with Vite integration in development mode
+
+## Smart Contract Integration
+Blockchain functionality is handled through Web3 infrastructure:
+- *Contract Interaction*: Ethers.js provider and contract abstraction
+- *Wallet Support*: MetaMask integration with automatic network detection
+- *Network Support*: Multi-network compatibility (Ethereum mainnet, Sepolia testnet)
+- *Transaction Management*: Comprehensive transaction state tracking with user feedback
+
+## Blockchain Infrastructure
+- *Ethers.js*: Web3 library for Ethereum blockchain interactions
+- *MetaMask*: Browser wallet integration for user authentication and transaction signing
+- *Smart Contracts*: Custom prediction market contracts deployed on Ethereum networks
 
 ## Problem Statement  
 - Hackathons lack **fun engagement tools** for participants & spectators.  
