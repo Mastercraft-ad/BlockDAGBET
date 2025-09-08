@@ -96,7 +96,7 @@ dagbet-frontend/
 
 bash
 # 1. Clone Repo
-git clone https://github.com/your-team/dagbet.git
+git clone https://github.com/Mastercraft-ad/BlockDAGBET.git
 cd dagbet-frontend
 
 # 2. Install Dependencies
