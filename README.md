@@ -24,7 +24,7 @@ DAGBet – Hackathon Meme Prediction Market
 - [Contributing](#contributing)  
 - [License](#-license)  
 
-##Overview  
+## Overview  
 
 Example Meme Markets:  
 - 🏆 *“Will our team place top 3?”*  
@@ -37,7 +37,7 @@ By putting predictions **on-chain**, DAGBet keeps **judges, participants, and th
 - Centralized betting platforms don’t fit the hackathon vibe.  
 - No simple way to **gamify hackathon participation** using blockchain.  
 
-##Our Solution  
+## Our Solution  
 
 **DAGBet provides:**  
 - **Meme Markets** → Hackathon-themed, lighthearted predictions.  
@@ -45,7 +45,7 @@ By putting predictions **on-chain**, DAGBet keeps **judges, participants, and th
 - **Gamification** → Keeps participants entertained between sessions.  
 - **Decentralized Oracles** → Judges/admins resolve outcomes fairly.  
 
-##How It Works  
+## How It Works  
 
 mermaid
 graph TD;
@@ -58,14 +58,14 @@ graph TD;
 3. **Resolve Market** → Admin declares the outcome.
 4. **Redeem Winnings** → Winners claim their share.
 
-##Tech Stack
+## Tech Stack
 
 * **Smart Contract** → Solidity (`DAGBet.sol`) on **BlockDAG L1**.
 * **Frontend** → React + Ethers.js.
 * **Wallet** → MetaMask / BlockDAG Wallet.
 
 
-##Project Structure
+## Project Structure
 
 <details>
 <summary>Click to expand</summary>
@@ -91,7 +91,7 @@ dagbet-frontend/
 
 
 
-## 🔧 Setup Instructions
+## Setup Instructions
 
 bash
 # 1. Clone Repo
@@ -121,7 +121,7 @@ const CONTRACT_ADDRESS = "YOUR_DEPLOYED_ADDRESS";
 
 ---
 
-##  Why DAGBet Can Win
+## Why DAGBet Can Win
 
 *  **Fun + Engaging** → Judges & hackers actually participate.
 *  **On-Theme** → Built 100% on BlockDAG.
