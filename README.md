@@ -12,17 +12,16 @@ DAGBet – Hackathon Meme Prediction Market
 
 
 ## 📑 Table of Contents  
-- [Overview](#-overview)  
-- [Problem Statement](#-problem-statement)  
-- [Our Solution](#-our-solution)  
-- [How It Works](#️-how-it-works)  
-- [Tech Stack](#-tech-stack)  
-- [Project Structure](#-project-structure)  
-- [Setup Instructions](#-setup-instructions)  
-- [Demo Flow](#-demo-flow)  
-- [Why DAGBet Can Win](#-why-dagbet-can-win)  
-- [Team](#-team)  
-- [Contributing](#-contributing)  
+- [Overview](#overview)  
+- [Problem Statement](#problem-statement)  
+- [Our Solution](#our-solution)  
+- [How It Works](#how-it-works)  
+- [Tech Stack](#tech-stack)  
+- [Project Structure](#project-structure)  
+- [Setup Instructions](#setup-instructions)  
+- [Demo Flow](#demo-flow)  
+- [Why DAGBet Can Win](#why-dagbet-can-win)   
+- [Contributing](#contributing)  
 - [License](#-license)  
 
 ##Overview  
