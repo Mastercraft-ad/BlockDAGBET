@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecentralizedPredictions - Web3 Prediction Markets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/24/outline/style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                }
+            },
+            fontFamily: {
+                sans: ["Inter", "system-ui", "sans-serif"],
+            }
+        }
+    }
+    </script>
+    <style>
+        :root {
+            --background: hsl(222 84% 5%);
+            --foreground: hsl(210 40% 98%);
+            --card: hsl(222 84% 5%);
+            --card-foreground: hsl(210 40% 98%);
+            --popover: hsl(222 84% 5%);
+            --popover-foreground: hsl(210 40% 98%);
+            --primary: hsl(217 91% 60%);
+            --primary-foreground: hsl(222 84% 5%);
+            --secondary: hsl(217 32% 17%);
+            --secondary-foreground: hsl(210 40% 98%);
+            --muted: hsl(217 32% 17%);
+            --muted-foreground: hsl(215 20.2% 65.1%);
+            --accent: hsl(217 32% 17%);
+            --accent-foreground: hsl(210 40% 98%);
+            --destructive: hsl(0 63% 31%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(217 32% 17%);
+            --input: hsl(217 32% 17%);
+            --ring: hsl(224 71% 4%);
+            --radius: 0.75rem;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: linear-gradient(135deg, hsl(222 84% 5%) 0%, hsl(217 32% 17%) 100%);
+            min-height: 100vh;
+        }
+
+        .gradient-border {
+            background: linear-gradient(135deg, hsl(217 91% 60%), hsl(142 71% 45%)) padding-box;
+            border: 1px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .bet-button-yes {
+            background: linear-gradient(135deg, hsl(142 71% 45%) 0%, hsl(142 69% 58%) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .bet-button-yes:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .bet-button-no {
+            background: linear-gradient(135deg, hsl(0 84% 60%) 0%, hsl(0 72% 51%) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .bet-button-no:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+
+        .wallet-button {
+            background: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(142 71% 45%) 100%);
+            transition: all 0.3s ease;
+        }
+
+        .wallet-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+        }
+
+        .market-progress {
+            background: linear-gradient(90deg, hsl(142 71% 45%) 0%, hsl(142 71% 45%) var(--yes-percentage, 50%), hsl(0 72% 51%) var(--yes-percentage, 50%), hsl(0 72% 51%) 100%);
+        }
+
+        .loading-spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground">
+    <!-- @COMPONENT: Header [Navigation with wallet connection] -->
+    <header class="sticky top-0 z-50 glass-card border-b border-border">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                            <span class="text-primary-foreground font-bold text-lg">P</span>
+                        </div>
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                            DecentralizedPredictions
+                        </h1>
+                    </div>
+                    <div class="pulse-dot w-2 h-2 bg-emerald-500 rounded-full"></div>
+                    <span class="text-sm text-muted-foreground">Mainnet</span>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="#markets" class="text-foreground hover:text-primary transition-colors">Markets</a>
+                    <a href="#create" class="text-foreground hover:text-primary transition-colors">Create</a>
+                    <a href="#analytics" class="text-foreground hover:text-primary transition-colors">Analytics</a>
+                </nav>
+
+                <!-- Wallet Connection Button -->
+                <button data-mock="true" data-event="click:connectWallet" class="wallet-button px-6 py-2 rounded-lg text-primary-foreground font-medium">
+                    <span data-bind="wallet.connected ? wallet.address : 'Connect Wallet'">0x1234...abcd</span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <main class="container mx-auto px-4 py-8 space-y-8">
+        <!-- Hero Stats Section -->
+        <section class="stats-card rounded-2xl p-8">
+            <div class="text-center mb-8">
+                <h2 class="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-emerald-400 bg-clip-text text-transparent">
+                    Decentralized Prediction Markets
+                </h2>
+                <p class="text-muted-foreground text-lg max-w-2xl mx-auto">
+                    Create, bet on, and resolve prediction markets with complete transparency on the blockchain
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-primary mb-2" data-bind="stats.totalVolume">2,847 ETH</div>
+                    <div class="text-muted-foreground">Total Volume</div>
+                </div>
+                <div class="glass-card rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-emerald-400 mb-2" data-bind="stats.activeMarkets">142</div>
+                    <div class="text-muted-foreground">Active Markets</div>
+                </div>
+                <div class="glass-card rounded-xl p-6 text-center">
+                    <div class="text-3xl font-bold text-amber-400 mb-2" data-bind="stats.totalUsers">8,293</div>
+                    <div class="text-muted-foreground">Total Users</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- @COMPONENT: CreateMarketForm [Form to create new prediction markets] -->
+        <section id="create" class="glass-card rounded-2xl p-8">
+            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+                Create New Market
+            </h3>
+            
+            <form data-event="submit:createMarket" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-foreground mb-2">Market Question</label>
+                    <textarea 
+                        class="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+                        rows="3"
+                        placeholder="Will Bitcoin reach $100,000 by the end of 2024?"
+                        data-mock="true"
+                        data-bind="form.question"
+                    >Will Bitcoin reach $100,000 by the end of 2024?</textarea>
+                    <p class="text-sm text-muted-foreground mt-1">Be specific and clear. Markets resolve based on objective criteria.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Resolution Deadline</label>
+                        <input 
+                            type="datetime-local"
+                            class="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            data-mock="true"
+                            data-bind="form.deadline"
+                            value="2024-12-31T23:59"
+                        />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-foreground mb-2">Initial Liquidity (ETH)</label>
+                        <input 
+                            type="number"
+                            step="0.01"
+                            min="0.01"
+                            class="w-full px-4 py-3 bg-input border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            placeholder="1.0"
+                            data-mock="true"
+                            data-bind="form.initialLiquidity"
+                            value="1.0"
+                        />
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 15.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                    <p class="text-sm text-amber-400">Market creation requires 0.1 ETH fee + gas costs</p>
+                </div>
+
+                <button 
+                    type="submit"
+                    class="wallet-button w-full py-4 rounded-lg text-primary-foreground font-semibold text-lg"
+                    data-implementation="Should validate form and call createMarket smart contract function"
+                >
+                    Create Market
+                </button>
+            </form>
+        </section>
+        <!-- @END_COMPONENT: CreateMarketForm -->
+
+        <!-- @COMPONENT: MarketList [Display all active markets with betting interface] -->
+        <section id="markets" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h3 class="text-2xl font-bold">Active Markets</h3>
+                <div class="flex items-center space-x-4">
+                    <select class="bg-input border border-border rounded-lg px-4 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+                        <option>All Categories</option>
+                        <option>Crypto</option>
+                        <option>Sports</option>
+                        <option>Politics</option>
+                        <option>Technology</option>
+                    </select>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-muted-foreground">Sort by:</span>
+                        <select class="bg-input border border-border rounded-lg px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+                            <option>Volume</option>
+                            <option>Newest</option>
+                            <option>Ending Soon</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- @MAP: markets.map(market => ( -->
+            <div class="glass-card rounded-2xl p-6 hover:bg-opacity-10 transition-all">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="market.question">
+                                    Will Bitcoin reach $100,000 by the end of 2024?
+                                </h4>
+                                <div class="flex items-center space-x-4 text-sm text-muted-foreground">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Ends <span data-bind="market.deadline">Dec 31, 2024</span>
+                                    </span>
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                        </svg>
+                                        Volume: <span data-bind="market.volume">247.5 ETH</span>
+                                    </span>
+                                    <span class="px-2 py-1 bg-emerald-500/20 text-emerald-400 rounded-full text-xs">Active</span>
+                                </div>
+                            </div>
+                            <button class="text-muted-foreground hover:text-foreground">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- Market Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-emerald-400">YES <span data-bind="market.yesPercentage">67%</span></span>
+                                <span class="text-red-400">NO <span data-bind="market.noPercentage">33%</span></span>
+                            </div>
+                            <div class="h-2 bg-secondary rounded-full overflow-hidden">
+                                <div 
+                                    class="market-progress h-full rounded-full"
+                                    style="--yes-percentage: 67%"
+                                    data-bind="market.progressStyle"
+                                ></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-muted-foreground mt-2">
+                                <span>YES: <span data-bind="market.yesAmount">165.6 ETH</span></span>
+                                <span>NO: <span data-bind="market.noAmount">81.9 ETH</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Betting Interface -->
+                    <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-0 lg:space-y-3 xl:space-y-0 xl:space-x-4 lg:w-80">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <input 
+                                    type="number" 
+                                    step="0.01" 
+                                    min="0.01"
+                                    class="flex-1 px-3 py-2 bg-input border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    placeholder="0.1 ETH"
+                                    data-mock="true"
+                                    data-bind="betForm.amount"
+                                    value="0.1"
+                                />
+                                <button class="text-xs text-muted-foreground hover:text-primary px-2 py-1 rounded border border-border">MAX</button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button 
+                                    class="bet-button-yes px-4 py-3 rounded-lg text-white font-semibold text-sm"
+                                    data-event="click:placeBet"
+                                    data-implementation="Should call placeBet(marketId, true) with ETH amount"
+                                >
+                                    YES ✅ @1.49
+                                </button>
+                                <button 
+                                    class="bet-button-no px-4 py-3 rounded-lg text-white font-semibold text-sm"
+                                    data-event="click:placeBet"
+                                    data-implementation="Should call placeBet(marketId, false) with ETH amount"
+                                >
+                                    NO ❌ @3.03
+                                </button>
+                            </div>
+                            <p class="text-xs text-muted-foreground mt-2 text-center">
+                                Potential return: <span class="text-foreground font-medium">0.149 ETH</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Market Example -->
+            <div class="glass-card rounded-2xl p-6 hover:bg-opacity-10 transition-all">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h4 class="text-lg font-semibold text-foreground mb-2" data-bind="market.question">
+                                    Will Ethereum implement proof-of-stake 2.0 before Q2 2024?
+                                </h4>
+                                <div class="flex items-center space-x-4 text-sm text-muted-foreground">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                        Ends <span data-bind="market.deadline">Jun 30, 2024</span>
+                                    </span>
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                        </svg>
+                                        Volume: <span data-bind="market.volume">89.3 ETH</span>
+                                    </span>
+                                    <span class="px-2 py-1 bg-amber-500/20 text-amber-400 rounded-full text-xs">Resolving Soon</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm mb-2">
+                                <span class="text-emerald-400">YES <span data-bind="market.yesPercentage">23%</span></span>
+                                <span class="text-red-400">NO <span data-bind="market.noPercentage">77%</span></span>
+                            </div>
+                            <div class="h-2 bg-secondary rounded-full overflow-hidden">
+                                <div 
+                                    class="market-progress h-full rounded-full"
+                                    style="--yes-percentage: 23%"
+                                ></div>
+                            </div>
+                            <div class="flex justify-between text-xs text-muted-foreground mt-2">
+                                <span>YES: <span data-bind="market.yesAmount">20.5 ETH</span></span>
+                                <span>NO: <span data-bind="market.noAmount">68.8 ETH</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row lg:flex-col xl:flex-row space-y-3 sm:space-y-0 sm:space-x-4 lg:space-x-0 lg:space-y-3 xl:space-y-0 xl:space-x-4 lg:w-80">
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2 mb-2">
+                                <input 
+                                    type="number" 
+                                    step="0.01" 
+                                    min="0.01"
+                                    class="flex-1 px-3 py-2 bg-input border border-border rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                                    placeholder="0.1 ETH"
+                                />
+                                <button class="text-xs text-muted-foreground hover:text-primary px-2 py-1 rounded border border-border">MAX</button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button class="bet-button-yes px-4 py-3 rounded-lg text-white font-semibold text-sm">
+                                    YES ✅ @4.35
+                                </button>
+                                <button class="bet-button-no px-4 py-3 rounded-lg text-white font-semibold text-sm">
+                                    NO ❌ @1.30
+                                </button>
+                            </div>
+                            <p class="text-xs text-muted-foreground mt-2 text-center">
+                                Potential return: <span class="text-foreground font-medium">0.435 ETH</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_MAP -->
+        </section>
+        <!-- @END_COMPONENT: MarketList -->
+
+        <!-- @COMPONENT: ResolveMarket [Admin interface for market resolution] -->
+        <section class="glass-card rounded-2xl p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold flex items-center">
+                    <svg class="w-6 h-6 mr-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    Market Resolution
+                </h3>
+                <span class="px-3 py-1 bg-amber-500/20 text-amber-400 text-sm rounded-full">
+                    Oracle Only
+                </span>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+                    <div class="flex items-start space-x-3">
+                        <svg class="w-5 h-5 text-amber-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <div>
+                            <p class="text-amber-400 font-medium">Oracle Authorization Required</p>
+                            <p class="text-sm text-muted-foreground mt-1">Only authorized oracles can resolve markets. This ensures fair and accurate outcomes.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Markets Ready for Resolution -->
+                <div class="space-y-4">
+                    <h4 class="text-lg font-semibold">Markets Ready for Resolution</h4>
+                    
+                    <div class="border border-border rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h5 class="font-semibold text-foreground" data-bind="resolutionMarket.question">
+                                    Will the S&P 500 close above 5,000 points by end of December 2023?
+                                </h5>
+                                <div class="flex items-center space-x-4 text-sm text-muted-foreground mt-2">
+                                    <span>Market ID: <span data-bind="resolutionMarket.id">#1247</span></span>
+                                    <span>Deadline Passed: <span data-bind="resolutionMarket.deadlinePassed">Dec 31, 2023</span></span>
+                                    <span>Total Volume: <span data-bind="resolutionMarket.volume">892.4 ETH</span></span>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs">Expired</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button 
+                                class="bet-button-yes px-6 py-3 rounded-lg text-white font-semibold"
+                                data-event="click:resolveMarket"
+                                data-implementation="Should call resolveMarket(marketId, true)"
+                            >
+                                Resolve as YES ✅
+                            </button>
+                            <button 
+                                class="bet-button-no px-6 py-3 rounded-lg text-white font-semibold"
+                                data-event="click:resolveMarket"
+                                data-implementation="Should call resolveMarket(marketId, false)"
+                            >
+                                Resolve as NO ❌
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="border border-border rounded-lg p-4">
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <h5 class="font-semibold text-foreground" data-bind="resolutionMarket.question">
+                                    Will Apple announce a VR headset at WWDC 2024?
+                                </h5>
+                                <div class="flex items-center space-x-4 text-sm text-muted-foreground mt-2">
+                                    <span>Market ID: <span data-bind="resolutionMarket.id">#1248</span></span>
+                                    <span>Deadline Passed: <span data-bind="resolutionMarket.deadlinePassed">Jun 10, 2024</span></span>
+                                    <span>Total Volume: <span data-bind="resolutionMarket.volume">156.7 ETH</span></span>
+                                </div>
+                            </div>
+                            <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs">Expired</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <button class="bet-button-yes px-6 py-3 rounded-lg text-white font-semibold">
+                                Resolve as YES ✅
+                            </button>
+                            <button class="bet-button-no px-6 py-3 rounded-lg text-white font-semibold">
+                                Resolve as NO ❌
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: ResolveMarket -->
+
+        <!-- @COMPONENT: RedeemButton [Interface for claiming winnings] -->
+        <section class="glass-card rounded-2xl p-8">
+            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                </svg>
+                Claim Winnings
+            </h3>
+
+            <div class="space-y-6">
+                <!-- Summary Card -->
+                <div class="stats-card rounded-xl p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-emerald-400 mb-1" data-bind="winnings.totalClaimable">4.73 ETH</div>
+                            <div class="text-muted-foreground text-sm">Total Claimable</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-amber-400 mb-1" data-bind="winnings.marketsWon">7</div>
+                            <div class="text-muted-foreground text-sm">Markets Won</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-primary mb-1" data-bind="winnings.totalReturn">+342%</div>
+                            <div class="text-muted-foreground text-sm">Total Return</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Claimable Markets -->
+                <div class="space-y-4">
+                    <h4 class="text-lg font-semibold">Your Winning Positions</h4>
+                    
+                    <!-- @MAP: userWinnings.map(winning => ( -->
+                    <div class="border border-emerald-500/20 bg-emerald-500/5 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h5 class="font-semibold text-foreground" data-bind="winning.question">
+                                    Bitcoin reached $75,000 in October 2024
+                                </h5>
+                                <div class="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
+                                    <span>Your Position: <span class="text-emerald-400 font-medium" data-bind="winning.position">YES</span></span>
+                                    <span>Bet Amount: <span data-bind="winning.betAmount">0.5 ETH</span></span>
+                                    <span>Odds: <span data-bind="winning.odds">@2.4</span></span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-emerald-400" data-bind="winning.claimAmount">1.2 ETH</div>
+                                <div class="text-sm text-muted-foreground">Claimable</div>
+                            </div>
+                        </div>
+                        <button 
+                            class="wallet-button w-full py-3 rounded-lg text-primary-foreground font-semibold"
+                            data-event="click:redeemWinnings"
+                            data-implementation="Should call redeem(marketId) smart contract function"
+                        >
+                            Claim 1.2 ETH
+                        </button>
+                    </div>
+
+                    <div class="border border-emerald-500/20 bg-emerald-500/5 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <h5 class="font-semibold text-foreground" data-bind="winning.question">
+                                    Tesla stock price exceeded $300 by Q3 2024
+                                </h5>
+                                <div class="flex items-center space-x-4 text-sm text-muted-foreground mt-1">
+                                    <span>Your Position: <span class="text-red-400 font-medium" data-bind="winning.position">NO</span></span>
+                                    <span>Bet Amount: <span data-bind="winning.betAmount">2.1 ETH</span></span>
+                                    <span>Odds: <span data-bind="winning.odds">@1.7</span></span>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-emerald-400" data-bind="winning.claimAmount">3.53 ETH</div>
+                                <div class="text-sm text-muted-foreground">Claimable</div>
+                            </div>
+                        </div>
+                        <button class="wallet-button w-full py-3 rounded-lg text-primary-foreground font-semibold">
+                            Claim 3.53 ETH
+                        </button>
+                    </div>
+                    <!-- @END_MAP -->
+
+                    <!-- Batch Claim Button -->
+                    <div class="pt-4 border-t border-border">
+                        <button 
+                            class="wallet-button w-full py-4 rounded-lg text-primary-foreground font-bold text-lg"
+                            data-event="click:claimAllWinnings"
+                            data-implementation="Should batch claim all winnings to save gas"
+                        >
+                            <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                            Claim All Winnings (4.73 ETH)
+                        </button>
+                        <p class="text-sm text-muted-foreground text-center mt-2">
+                            Batch claiming saves gas fees. Estimated cost: ~$12
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: RedeemButton -->
+
+        <!-- File Structure Documentation -->
+        <section class="glass-card rounded-2xl p-8">
+            <h3 class="text-2xl font-bold mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 1v6h8V1"/>
+                </svg>
+                Project Structure & Implementation Guide
+            </h3>
+
+            <div class="space-y-6">
+                <!-- @STATE: showFileStructure:boolean = true -->
+                <div class="bg-secondary/50 rounded-lg p-6">
+                    <h4 class="text-lg font-semibold mb-4">Recommended File Structure</h4>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h5 class="font-medium text-foreground mb-3">Core Components</h5>
+                            <div class="space-y-2 text-sm font-mono text-muted-foreground">
+                                <div>📁 src/</div>
+                                <div class="pl-4">📁 components/</div>
+                                <div class="pl-8">📄 CreateMarketForm.tsx</div>
+                                <div class="pl-8">📄 MarketList.tsx</div>
+                                <div class="pl-8">📄 MarketCard.tsx</div>
+                                <div class="pl-8">📄 ResolveMarket.tsx</div>
+                                <div class="pl-8">📄 RedeemButton.tsx</div>
+                                <div class="pl-8">📄 WalletConnection.tsx</div>
+                                <div class="pl-4">📁 hooks/</div>
+                                <div class="pl-8">📄 useContract.ts</div>
+                                <div class="pl-8">📄 useWallet.ts</div>
+                                <div class="pl-8">📄 useMarkets.ts</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h5 class="font-medium text-foreground mb-3">Utilities & Types</h5>
+                            <div class="space-y-2 text-sm font-mono text-muted-foreground">
+                                <div class="pl-4">📁 utils/</div>
+                                <div class="pl-8">📄 contract.ts</div>
+                                <div class="pl-8">📄 web3.ts</div>
+                                <div class="pl-8">📄 formatting.ts</div>
+                                <div class="pl-4">📁 types/</div>
+                                <div class="pl-8">📄 market.ts</div>
+                                <div class="pl-8">📄 wallet.ts</div>
+                                <div class="pl-4">📁 constants/</div>
+                                <div class="pl-8">📄 contract.ts</div>
+                                <div class="pl-8">📄 chains.ts</div>
+                                <div class="pl-4">📄 App.tsx</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Implementation Steps -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="border border-border rounded-lg p-4">
+                        <h5 class="font-semibold text-emerald-400 mb-3">Step 1: Wallet Connection</h5>
+                        <div class="space-y-2 text-sm text-muted-foreground">
+                            <p>• Install ethers.js and detect MetaMask</p>
+                            <p>• Handle wallet connection state</p>
+                            <p>• Switch to correct network</p>
+                            <p>• Display account balance</p>
+                        </div>
+                    </div>
+                    <div class="border border-border rounded-lg p-4">
+                        <h5 class="font-semibold text-primary mb-3">Step 2: Smart Contract Setup</h5>
+                        <div class="space-y-2 text-sm text-muted-foreground">
+                            <p>• Define contract ABI and address</p>
+                            <p>• Create contract instance</p>
+                            <p>• Handle transaction states</p>
+                            <p>• Implement error handling</p>
+                        </div>
+                    </div>
+                    <div class="border border-border rounded-lg p-4">
+                        <h5 class="font-semibold text-amber-400 mb-3">Step 3: Market Creation</h5>
+                        <div class="space-y-2 text-sm text-muted-foreground">
+                            <p>• Build form validation</p>
+                            <p>• Call createMarket function</p>
+                            <p>• Handle loading and success states</p>
+                            <p>• Update UI after creation</p>
+                        </div>
+                    </div>
+                    <div class="border border-border rounded-lg p-4">
+                        <h5 class="font-semibold text-red-400 mb-3">Step 4: Betting Interface</h5>
+                        <div class="space-y-2 text-sm text-muted-foreground">
+                            <p>• Fetch active markets data</p>
+                            <p>• Build bet placement UI</p>
+                            <p>• Handle ETH value inputs</p>
+                            <p>• Process bet transactions</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Examples Section -->
+                <div class="bg-muted/20 rounded-lg p-6">
+                    <h5 class="font-semibold text-foreground mb-4">Key Implementation Notes</h5>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <h6 class="text-primary font-medium mb-2">Contract Interactions</h6>
+                            <ul class="space-y-1 text-muted-foreground">
+                                <li>• Use ethers.parseEther() for ETH amounts</li>
+                                <li>• Implement proper error catching</li>
+                                <li>• Show transaction confirmations</li>
+                                <li>• Handle gas estimation</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h6 class="text-emerald-400 font-medium mb-2">State Management</h6>
+                            <ul class="space-y-1 text-muted-foreground">
+                                <li>• Use React hooks for wallet state</li>
+                                <li>• Implement loading states</li>
+                                <li>• Handle transaction pending states</li>
+                                <li>• Refresh data after transactions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Contract Functions -->
+                <div class="border border-border rounded-lg p-6">
+                    <h5 class="font-semibold text-foreground mb-4">Smart Contract Functions Reference</h5>
+                    <div class="space-y-4">
+                        <div class="bg-secondary/30 rounded p-4">
+                            <code class="text-emerald-400 font-mono text-sm">
+                                createMarket(string question, uint256 deadline)
+                            </code>
+                            <p class="text-muted-foreground text-sm mt-2">Creates a new prediction market with question and deadline timestamp</p>
+                        </div>
+                        <div class="bg-secondary/30 rounded p-4">
+                            <code class="text-primary font-mono text-sm">
+                                placeBet(uint256 marketId, bool choice) payable
+                            </code>
+                            <p class="text-muted-foreground text-sm mt-2">Place a bet on a market (true = YES, false = NO) with ETH value</p>
+                        </div>
+                        <div class="bg-secondary/30 rounded p-4">
+                            <code class="text-amber-400 font-mono text-sm">
+                                resolveMarket(uint256 marketId, bool outcome)
+                            </code>
+                            <p class="text-muted-foreground text-sm mt-2">Admin/Oracle function to resolve market with final outcome</p>
+                        </div>
+                        <div class="bg-secondary/30 rounded p-4">
+                            <code class="text-red-400 font-mono text-sm">
+                                redeem(uint256 marketId)
+                            </code>
+                            <p class="text-muted-foreground text-sm mt-2">Claim winnings from resolved markets where user bet correctly</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-border bg-card/50 mt-16">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+                        <span class="text-primary-foreground font-bold text-lg">P</span>
+                    </div>
+                    <span class="text-foreground font-semibold">DecentralizedPredictions</span>
+                </div>
+                <div class="flex items-center space-x-6 text-sm text-muted-foreground">
+                    <a href="#" class="hover:text-foreground transition-colors">Documentation</a>
+                    <a href="#" class="hover:text-foreground transition-colors">GitHub</a>
+                    <a href="#" class="hover:text-foreground transition-colors">Discord</a>
+                    <a href="#" class="hover:text-foreground transition-colors">Twitter</a>
+                </div>
+            </div>
+            <div class="border-t border-border mt-6 pt-6 text-center text-sm text-muted-foreground">
+                <p>© 2024 DecentralizedPredictions. Built on Ethereum. Powered by Web3.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        (function() {
+            // TODO: Implement wallet connection with MetaMask
+            // TODO: Implement contract interactions with ethers.js
+            // TODO: Add real-time market data updates
+            // TODO: Handle transaction states and error cases
+            // TODO: Implement proper state management for Web3 interactions
+            
+            // Mock interaction handlers for demonstration
+            console.log('DecentralizedPredictions App Loaded');
+            console.log('Next Steps:');
+            console.log('1. Install dependencies: npm install ethers react typescript tailwindcss');
+            console.log('2. Set up wallet connection with MetaMask detection');
+            console.log('3. Configure smart contract ABI and address constants');
+            console.log('4. Implement React components with proper TypeScript typing');
+            console.log('5. Add transaction status handling and user feedback');
+        })();
+    </script>
+</body>
+</html>
