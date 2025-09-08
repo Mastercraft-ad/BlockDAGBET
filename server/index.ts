@@ -20,7 +20,7 @@ app.use((req, res, next) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     if (path.startsWith("/api")) {
-      let logLine = ${req.method} ${path} ${res.statusCode} in ${duration}ms;
+      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
@@ -67,7 +67,7 @@ app.use((req, res, next) => {
     host: process.platform === "win32" ? "127.0.0.1" : "0.0.0.0",
   },
   () => {
-    log(serving on http://${process.platform === "win32" ? "127.0.0.1" : "0.0.0.0"}:${port});
+    log(`serving on http://${process.platform === "win32" ? "127.0.0.1" : "0.0.0.0"}:${port}`);
   }
 );
 })();
