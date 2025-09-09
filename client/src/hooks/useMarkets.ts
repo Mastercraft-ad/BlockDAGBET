@@ -84,16 +84,16 @@ export function useMarkets() {
 
   const getActiveMarkets = useCallback(() => {
     const now = Date.now() / 1000;
-    return markets.filter(market => !market.isResolved && market.deadline > now);
+    return markets.filter(market => market && !market.isResolved && market.deadline > now);
   }, [markets]);
 
   const getResolvedMarkets = useCallback(() => {
-    return markets.filter(market => market.isResolved);
+    return markets.filter(market => market && market.isResolved);
   }, [markets]);
 
   const getExpiredMarkets = useCallback(() => {
     const now = Date.now() / 1000;
-    return markets.filter(market => !market.isResolved && market.deadline <= now);
+    return markets.filter(market => market && !market.isResolved && market.deadline <= now);
   }, [markets]);
 
   const refreshMarkets = useCallback(() => {

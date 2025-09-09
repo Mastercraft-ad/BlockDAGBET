@@ -1,5 +1,5 @@
 // src/constants.ts
-export const CONTRACT_ADDRESS ="0x59D5a3a5009D12305dcfc060429ede2e5c1cbf43" //"0x6deBB094344757d4aFB4729EEE4dfA4acef43c07";
+export const CONTRACT_ADDRESS = "0x5BBc9539e0cE351E7e6CD5216F166D12173cbca6"; //"0x6deBB094344757d4aFB4729EEE4dfA4acef43c07";
 // import.meta.env.VITE_CONTRACT_ADDRESS;
 
 export const CONTRACT_ABI = [
@@ -7,16 +7,16 @@ export const CONTRACT_ABI = [
   "function placeBet(uint256 marketId, bool choice) external payable",
   "function resolveMarket(uint256 marketId, bool outcome) external",
   "function redeem(uint256 marketId) external",
-  
+
   "function getMarket(uint256 marketId) external view returns (string question, uint256 deadline, address creator, bool isResolved, bool outcome, uint256 totalYesBets, uint256 totalNoBets, uint256 yesPool, uint256 noPool, uint256 createdAt, uint256 resolvedAt)",
   "function getMarketCount() external view returns (uint256)",
-  
+
   "function getUserBets(address user, uint256 marketId) external view returns (uint256 yesBets, uint256 noBets)",
   "function canClaim(address user, uint256 marketId) external view returns (bool, uint256)",
   "event MarketCreated(uint256 indexed marketId, string question, uint256 deadline, address creator)",
   "event BetPlaced(uint256 indexed marketId, address indexed user, bool choice, uint256 amount)",
   "event MarketResolved(uint256 indexed marketId, bool outcome)",
-  "event WinningsClaimed(uint256 indexed marketId, address indexed user, uint256 amount)"
+  "event WinningsClaimed(uint256 indexed marketId, address indexed user, uint256 amount)",
 ];
 
 export const SUPPORTED_CHAIN_IDS = [11155111]; // Sepolia
