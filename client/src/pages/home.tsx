@@ -10,10 +10,11 @@ export default function Home() {
   const { markets, activeMarkets } = useMarkets();
 
   const totalVolume = markets.reduce((sum, market) => {
+    if (!market) return sum;
     return sum + parseFloat(market.yesPool) + parseFloat(market.noPool);
   }, 0);
 
-  const totalUsers = new Set(markets.map(m => m.creator)).size;
+  const totalUsers = new Set(markets.filter(m => m).map(m => m.creator)).size;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
