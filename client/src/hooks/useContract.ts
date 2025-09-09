@@ -59,7 +59,7 @@ export function useContract() {
     try {
       const contract = await Web3Utils.getContract();
       return executeTransaction(
-        () => contract.createMarket(question, deadline, { 
+        () => contract.createMarket(question, deadline, Web3Utils.parseEthAmount(value), { 
           value: Web3Utils.parseEthAmount(value) 
         }),
         'Market created successfully!'

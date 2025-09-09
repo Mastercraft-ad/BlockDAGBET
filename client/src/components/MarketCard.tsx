@@ -6,8 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { Market } from '@/types/market';
 import { useContract } from '@/hooks/useContract';
 import { useWallet } from '@/hooks/useWallet';
+import { useAdmin } from '@/hooks/useAdmin';
 import { formatTimeRemaining, formatPercentage, calculateOdds, formatCurrency } from '@/utils/formatting';
-import { Clock, TrendingUp, Heart } from 'lucide-react';
+import { Clock, TrendingUp, Heart, Shield, CheckCircle, XCircle } from 'lucide-react';
 
 interface MarketCardProps {
   market: Market;
@@ -16,7 +17,8 @@ interface MarketCardProps {
 
 export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
   const { wallet } = useWallet();
-  const { placeBet, txState } = useContract();
+  const { isAdmin } = useAdmin();
+  const { placeBet, resolveMarket, txState } = useContract();
   const [betAmount, setBetAmount] = useState('0.1');
 
   const totalVolume = parseFloat(market.yesPool) + parseFloat(market.noPool);
@@ -39,6 +41,17 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
     try {
       await placeBet(market.id, choice, betAmount);
       onBetPlaced?.();
+    } catch (error) {
+      // Error handling is done in the hook
+    }
+  };
+
+  const handleAdminResolve = async (outcome: boolean) => {
+    if (!isAdmin) return;
+    
+    try {
+      await resolveMarket(market.id, outcome);
+      onBetPlaced?.(); // Refresh markets
     } catch (error) {
       // Error handling is done in the hook
     }
@@ -175,6 +188,39 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                     {formatCurrency(potentialReturn.toString())} BDAG
                   </span>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Admin Controls */}
+          {isAdmin && isExpired && !market.isResolved && (
+            <div className="border-t border-primary/20 pt-4 bg-primary/5 rounded-lg p-3">
+              <div className="flex items-center space-x-2 mb-3">
+                <Shield className="w-4 h-4 text-primary" />
+                <span className="text-sm font-medium text-primary">Admin Controls</span>
+                <Badge variant="outline" className="text-xs border-primary/20 text-primary">
+                  Pending Resolution
+                </Badge>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  onClick={() => handleAdminResolve(true)}
+                  disabled={txState.loading}
+                  size="sm"
+                  className="bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 text-green-400"
+                >
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                  Resolve YES
+                </Button>
+                <Button
+                  onClick={() => handleAdminResolve(false)}
+                  disabled={txState.loading}
+                  size="sm"
+                  className="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 text-red-400"
+                >
+                  <XCircle className="w-4 h-4 mr-1" />
+                  Resolve NO
+                </Button>
               </div>
             </div>
           )}

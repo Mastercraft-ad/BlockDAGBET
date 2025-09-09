@@ -1,9 +1,9 @@
 // src/constants.ts
-export const CONTRACT_ADDRESS = "0x5BBc9539e0cE351E7e6CD5216F166D12173cbca6"; //"0x6deBB094344757d4aFB4729EEE4dfA4acef43c07";
+export const CONTRACT_ADDRESS = "0x5Af16F8aAE6810541b7445771D7757B526485342"; //"0x6deBB094344757d4aFB4729EEE4dfA4acef43c07";
 // import.meta.env.VITE_CONTRACT_ADDRESS;
 
 export const CONTRACT_ABI = [
-  "function createMarket(string question, uint256 deadline) external payable returns (uint256)",
+  "function createMarket(string question, uint256 deadline, uint256 initialLiquidity) external payable returns (uint256)",
   "function placeBet(uint256 marketId, bool choice) external payable",
   "function resolveMarket(uint256 marketId, bool outcome) external",
   "function redeem(uint256 marketId) external",
