@@ -169,8 +169,8 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                     className="bet-button-yes px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-white font-semibold text-xs sm:text-sm"
                     data-testid={`button-bet-yes-${market.id}`}
                   >
-                    <span className="hidden sm:inline">YES ✅ @{yesOdds.toFixed(2)}</span>
-                    <span className="sm:hidden">YES ✅</span>
+                    <span className="hidden sm:inline">YES  @{yesOdds.toFixed(2)}</span>
+                    <span className="sm:hidden">YES </span>
                   </Button>
                   <Button
                     onClick={() => handleBet(false)}
@@ -178,8 +178,8 @@ export function MarketCard({ market, onBetPlaced }: MarketCardProps) {
                     className="bet-button-no px-3 sm:px-4 py-2 sm:py-3 rounded-lg text-white font-semibold text-xs sm:text-sm"
                     data-testid={`button-bet-no-${market.id}`}
                   >
-                    <span className="hidden sm:inline">NO ❌ @{noOdds.toFixed(2)}</span>
-                    <span className="sm:hidden">NO ❌</span>
+                    <span className="hidden sm:inline">NO  @{noOdds.toFixed(2)}</span>
+                    <span className="sm:hidden">NO </span>
                   </Button>
                 </div>
                 <div className="flex justify-between items-center text-xs text-muted-foreground">

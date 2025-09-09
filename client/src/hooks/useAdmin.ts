@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useWallet } from './useWallet';
 
 // Admin wallet address
-const ADMIN_ADDRESS = '0x3c17f3F514658fACa2D24DE1d29F542a836FD10A';
+const ADMIN_ADDRESS = '0x3c17f3F514658fACa2D24DE1d29F542a836FD10A'; // Replace with your admin wallet address
 
 export function useAdmin() {
   const { wallet } = useWallet();
